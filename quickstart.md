@@ -172,17 +172,19 @@ Connection settings:
 
 ### Reasoning modes
 
-Hy3 supports `no_think` for direct responses, `low` for reduced reasoning effort, and `high` for deeper reasoning on complex tasks. The repository default is `no_think`.
+Hy3 supports `no_think` for direct responses, `low` for reduced reasoning effort, and `high` for deeper reasoning on complex tasks. The self-hosted chat template used by this repository defaults to `no_think`. Managed-provider defaults can differ, so set the intended mode explicitly.
 
 Choose exactly one Python SDK request shape:
 
 | Provider | Python SDK `extra_body` | Required server configuration for advanced examples |
 | --- | --- | --- |
 | TokenHub | `{"reasoning_effort": effort}` | Managed by TokenHub |
-| vLLM | `{"chat_template_kwargs": {"reasoning_effort": effort}}` | Use `--reasoning-parser hy_v3`; tool calling also requires `--tool-call-parser hy_v3` and `--enable-auto-tool-choice` |
+| vLLM | `{"chat_template_kwargs": {"reasoning_effort": effort}}` | Use `--reasoning-parser hy_v3`; tool calling also requires `--tool-call-parser hy_v3` and `--enable-auto-tool-choice`. Reasoning-enabled tool loops also set `interleaved_thinking=true` inside `chat_template_kwargs`. |
 | SGLang | `{"reasoning_effort": effort}` | When following this repository's deployment command, use `--reasoning-parser hunyuan` and `--tool-call-parser hunyuan` |
 
 Replace `effort` with `no_think`, `low`, or `high`. For TokenHub and SGLang, `extra_body` adds `reasoning_effort` at the top level of the JSON request; for vLLM, it remains nested under `chat_template_kwargs`.
+
+For reasoning-enabled tool loops, preserve the assistant `content`, `reasoning_content`, and `tool_calls` before appending each `role=tool` result.
 
 Do not combine the top-level and nested forms. Use only the request shape listed for the selected provider.
 

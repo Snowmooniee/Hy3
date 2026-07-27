@@ -19,6 +19,8 @@ Configure `HY3_PROVIDER`, `HY3_BASE_URL`, `HY3_API_KEY`, and `HY3_MODEL` as desc
 | `basic_chat.py` | Single-turn chat, explicit multi-turn history, and basic response parsing |
 | `streaming.py` | Streaming output, incremental content parsing, finish reason, and usage reporting |
 | `latency_compare.py` | Single-run comparison of non-streaming total latency and streaming TTFT and total latency |
+| `reasoning_mode.py` | Provider-aware comparison of `no_think`, `low`, and `high`, including separate reasoning, final content, and usage parsing |
+| `tool_calling.py` | Bounded tool-calling loop with an allowlist, validated arguments, complete assistant-message history, and deterministic local tool data |
 
 ## Run an example
 
@@ -89,6 +91,56 @@ finish_reason: stop
 tokens: prompt=29, completion=38, total=67
 ```
 
+#### `reasoning_mode.py`
+
+Verified on 2026-07-28 using the same environment. The output below is abridged, and the reasoning text is omitted. This is a single-run observation, not a quality or token-usage benchmark.
+
+```text
+Reasoning effort: no_think
+reasoning_content:
+(not returned)
+content:
+$69.12
+finish_reason: stop
+reasoning_tokens: 0
+
+Reasoning effort: low
+reasoning_content:
+[omitted]
+content:
+$69.12
+finish_reason: stop
+reasoning_tokens: 93
+
+Reasoning effort: high
+reasoning_content:
+[omitted]
+content:
+$69.12
+finish_reason: stop
+reasoning_tokens: 104
+```
+
+#### `tool_calling.py`
+
+Verified on 2026-07-28 using the same environment. The weather result comes from deterministic local demonstration data, not a live weather service.
+
+```text
+API round: 1
+finish_reason: tool_calls
+reasoning_content_preserved: True
+tool: get_weather
+arguments: {"city": "Beijing"}
+result: {"city": "Beijing", "temperature_c": 22, "condition": "sunny", "source": "local demonstration data"}
+
+API round: 2
+finish_reason: stop
+reasoning_content_preserved: True
+final_answer:
+Beijing is currently sunny with a temperature of 22°C.
+tool_calls_executed: 1
+```
+
 ## Design conventions
 
 - Each script is standalone and can be copied without importing a project-specific helper module.
@@ -96,6 +148,9 @@ tokens: prompt=29, completion=38, total=67
 - Scripts never print the API key.
 - Responses are parsed explicitly instead of printing the complete SDK object.
 - Provider-specific request fields are used only by examples that need them.
+- Tool execution is restricted to an explicit allowlist and bounded by round and per-round call limits.
+- `tool_calling.py` uses deterministic local data so the example does not require another API key or present demonstration data as live weather.
+- Reasoning-enabled tool loops preserve the assistant `content`, `reasoning_content`, and `tool_calls` before appending each `role=tool` result.
 - Sample output is added only after the corresponding example has been verified against a real Hy3 endpoint.
 
 The client setup has been checked with Python 3.11.9 and OpenAI Python SDK 2.48.0. Live provider, date, and onboarding results are recorded in the Pull Request description.
