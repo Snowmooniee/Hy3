@@ -192,7 +192,7 @@ Do not combine the top-level and nested forms. Use only the request shape listed
 
 This repository does not define a fixed requests-per-minute or tokens-per-minute limit. TokenHub limits vary by account, plan, model service, region, and platform policy; self-hosted limits depend on hardware, server configuration, concurrency, and any gateway in front of the endpoint.
 
-When the API returns HTTP `429`, reduce the request rate and honor `Retry-After` when present. The retry example demonstrates bounded handling without assuming a fixed repository-wide limit.
+When the API returns HTTP `429`, reduce the request rate and honor `Retry-After` when present. The [retry example](./examples/api/error_handling_retry.py) demonstrates bounded handling without assuming a fixed repository-wide limit.
 
 ## Run the examples
 

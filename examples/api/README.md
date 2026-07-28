@@ -21,6 +21,7 @@ Configure `HY3_PROVIDER`, `HY3_BASE_URL`, `HY3_API_KEY`, and `HY3_MODEL` as desc
 | `latency_compare.py` | Single-run comparison of non-streaming total latency and streaming TTFT and total latency |
 | `reasoning_mode.py` | Provider-aware comparison of `no_think`, `low`, and `high`, including separate reasoning, final content, and usage parsing |
 | `tool_calling.py` | Bounded tool-calling loop with an allowlist, validated arguments, complete assistant-message history, and deterministic local tool data |
+| `error_handling_retry.py` | Explicit bounded retries for connection errors, timeouts, `408`, `429`, and recoverable `5xx` responses, with fast failure for non-retryable errors |
 
 ## Run an example
 
@@ -141,6 +142,22 @@ Beijing is currently sunny with a temperature of 22°C.
 tool_calls_executed: 1
 ```
 
+#### `error_handling_retry.py`
+
+Verified on 2026-07-28 using the same environment. The live request exercised the success path without triggering a retry:
+
+```text
+Provider: tokenhub
+Model: hy3
+Maximum attempts: 4
+response:
+An API client should automatically retry the request with exponential backoff and jitter after detecting a transient server error like a 503 or 429 status code.
+finish_reason: stop
+tokens: prompt=31, completion=31, total=62
+```
+
+Offline fault injection additionally verified bounded network retries, `503` exponential backoff, `429` `Retry-After` handling, and fast failure for `401` and `409`. The complete test matrix is recorded in the Pull Request description.
+
 ## Design conventions
 
 - Each script is standalone and can be copied without importing a project-specific helper module.
@@ -152,5 +169,6 @@ tool_calls_executed: 1
 - `tool_calling.py` uses deterministic local data so the example does not require another API key or present demonstration data as live weather.
 - Reasoning-enabled tool loops preserve the assistant `content`, `reasoning_content`, and `tool_calls` before appending each `role=tool` result.
 - Sample output is added only after the corresponding example has been verified against a real Hy3 endpoint.
+- `error_handling_retry.py` disables SDK retries before applying its own retry budget, so the printed attempt limit is the actual limit.
 
 The client setup has been checked with Python 3.11.9 and OpenAI Python SDK 2.48.0. Live provider, date, and onboarding results are recorded in the Pull Request description.
