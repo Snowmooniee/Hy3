@@ -108,6 +108,8 @@ Hy3 在软件开发、办公生产、金融建模、前端设计、游戏制作�
 
 ## 快速开始
 
+如需在 5 分钟内通过 TokenHub 或正在运行的自托管端点获得首次 API 响应，请参阅 [Hy3 API 快速开始](./quickstart_CN.md)。[API 示例指南](./examples/api/README.md)提供基础聊天、流式响应、延迟对比、推理模式、工具调用以及错误处理与重试的可运行示例。
+
 建议先通过 [vLLM](#使用-vllm-推理) 或 [SGLang](#使用-sglang-推理) 部署服务，然后通过 OpenAI 兼容 API 调用：
 
 ```python

@@ -111,6 +111,8 @@ Model usefulness is not fully captured by benchmarks. Based on extensive product
 
 ## Quickstart
 
+For a first API response within five minutes through TokenHub or a running self-hosted endpoint, see the [Hy3 API quickstart](./quickstart.md). Runnable examples covering basic chat, streaming, latency comparison, reasoning modes, tool calling, and error handling with retry are available in the [API examples guide](./examples/api/README.md).
+
 Deploy Hy3 with [vLLM](#vllm) or [SGLang](#sglang) first, then call the OpenAI-compatible API:
 
 ```python

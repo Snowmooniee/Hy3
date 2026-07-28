@@ -1,5 +1,7 @@
 # Hy3 API Quickstart
 
+English | [简体中文](./quickstart_CN.md)
+
 Use this guide to make your first Hy3 API call and explore its core API capabilities. If you already have a TokenHub API key or a running self-hosted endpoint, you should be able to receive your first response within 5 minutes.
 
 ## Choose an access path
